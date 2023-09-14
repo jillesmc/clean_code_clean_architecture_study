@@ -1,7 +1,8 @@
-import AccountDAO from "../src/AccountDAO";
+import AccountDAO from "../src/AccountDAODatabase";
 import AccountService from "../src/AccountService";
 import sinon from "sinon";
 import MailerGateway from "../src/MailerGateway";
+import AccountDAOMemory from "../src/AccountDAOMemory";
 
 test("Deve criar um passageiro", async function () {
 	const input = {
@@ -155,4 +156,35 @@ test("Deve criar um passageiro com mock", async function () {
 	const account = await accountService.getAccount(output.accountId);
 	mock.verify();
 	mock.restore();
+});
+
+
+test("Deve criar um passageiro com fake", async function () {
+	const accountDAO = new AccountDAOMemory();
+	const input: any = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+	const accountService = new AccountService(accountDAO);
+	const output = await accountService.signup(input);
+	const account = await accountService.getAccount(output.accountId);
+	expect(account.account_id).toBeDefined();
+	expect(account.name).toBe(input.name);
+	expect(account.email).toBe(input.email);
+	expect(account.cpf).toBe(input.cpf);
+});
+
+test("Não deve criar um passageiro com conta existente com fake", async function () {
+	const accountDAO = new AccountDAOMemory();
+	const input = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+	const accountService = new AccountService(accountDAO);
+	await accountService.signup(input)
+	await expect(() => accountService.signup(input)).rejects.toThrow(new Error("Account already exists"));
 });

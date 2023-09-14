@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import AccountDAO from "../src/AccountDAO";
+import AccountDAO from "../src/AccountDAODatabase";
 
 test("Deve criar um registro na tabela account e consultar por email", async () => {
   const accountDAO = new AccountDAO();

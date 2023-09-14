@@ -1,19 +1,20 @@
 import crypto from "crypto";
 import CpfValidator from "./CpfValidator";
-import AccountDAO from "./AccountDAO";
+import AccountDAO from "./AccountDAODatabase";
 import MailerGateway from "./MailerGateway";
+import AccountDAODatabase from "./AccountDAODatabase";
 
 export default class AccountService {
   cpfValidator: CpfValidator;
-	accountDAO: AccountDAO;
   mailerGateway: MailerGateway;
 
-  constructor() {
+  // criando uma porta para que um ou mais adapters implementem, permitindo que eu varie o comportamento
+  constructor(readonly accountDAO: AccountDAO = new AccountDAODatabase()) {
     this.cpfValidator = new CpfValidator();
-		this.accountDAO = new AccountDAO
     this.mailerGateway = new MailerGateway();
   }
 
+  // port
   async signup(input: any) {
     input.accountId = crypto.randomUUID();
     input.verificationCode = crypto.randomUUID();
@@ -31,6 +32,7 @@ export default class AccountService {
     };
   }
 
+  // port
   async getAccount(accountId: string) {
     const account = await this.accountDAO.getById(accountId);
     return account;
