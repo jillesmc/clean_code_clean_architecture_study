@@ -113,7 +113,6 @@ test("Deve criar um passageiro com stub", async function () {
 	stubGetById.restore();
 });
 
-
 test("Deve criar um passageiro com spy", async function () {
 	const spy = sinon.spy(MailerGateway.prototype, "send");
 	const input: any = {
@@ -135,4 +134,25 @@ test("Deve criar um passageiro com spy", async function () {
 	stubSave.restore();
 	stubGetByEmail.restore();
 	stubGetById.restore();
+});
+
+test("Deve criar um passageiro com mock", async function () {
+	const input: any = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+	const mock = sinon.mock(MailerGateway.prototype);
+	mock.expects("send").withArgs(input.email, "Verification").calledOnce;
+	const mockAccountDAO = sinon.mock(AccountDAO.prototype);
+	mockAccountDAO.expects("save").resolves();
+	mockAccountDAO.expects("getByEmail").resolves();
+	const accountService = new AccountService();
+	const output = await accountService.signup(input);
+	input.account_id = output.accountId;
+	mockAccountDAO.expects("getById").resolves(input);
+	const account = await accountService.getAccount(output.accountId);
+	mock.verify();
+	mock.restore();
 });
