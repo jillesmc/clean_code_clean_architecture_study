@@ -1,6 +1,7 @@
 import AccountDAO from "../src/AccountDAO";
 import AccountService from "../src/AccountService";
 import sinon from "sinon";
+import MailerGateway from "../src/MailerGateway";
 
 test("Deve criar um passageiro", async function () {
 	const input = {
@@ -107,6 +108,30 @@ test("Deve criar um passageiro com stub", async function () {
 	expect(account.name).toBe(input.name);
 	expect(account.email).toBe(input.email);
 	expect(account.cpf).toBe(input.cpf);
+	stubSave.restore();
+	stubGetByEmail.restore();
+	stubGetById.restore();
+});
+
+
+test("Deve criar um passageiro com spy", async function () {
+	const spy = sinon.spy(MailerGateway.prototype, "send");
+	const input: any = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+	const stubSave = sinon.stub(AccountDAO.prototype, "save").resolves();
+	const stubGetByEmail = sinon.stub(AccountDAO.prototype, "getByEmail").resolves();
+	const accountService = new AccountService();
+	const output = await accountService.signup(input);
+	input.account_id = output.accountId;
+	const stubGetById = sinon.stub(AccountDAO.prototype, "getById").resolves(input);
+	const account = await accountService.getAccount(output.accountId);
+	expect(spy.calledOnce).toBeTruthy();
+	expect(spy.calledWith(input.email, "Verification")).toBeTruthy();
+	spy.restore();
 	stubSave.restore();
 	stubGetByEmail.restore();
 	stubGetById.restore();
