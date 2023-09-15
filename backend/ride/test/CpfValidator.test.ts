@@ -12,7 +12,9 @@ test.each([
 
 test.each([
 	"958.187.055-00",
-	"958.187.055"
+	"958.187.055",
+	"",
+	"11111111111",
 ])("Não deve validar um cpf", function (cpf: string) {
 	const cpfValidator = new CpfValidator();
 	expect(cpfValidator.validate(cpf)).toBeFalsy();

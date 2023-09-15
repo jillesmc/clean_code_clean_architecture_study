@@ -1,0 +1,3 @@
+{
+  "typescript.tsdk": "./backend/ride/node_modules/typescript/lib"
+}
