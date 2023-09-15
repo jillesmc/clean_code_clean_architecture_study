@@ -27,35 +27,37 @@ test("Deve solicitar uma corrida e receber a rideId", async function () {
 });
 
 test("Deve solicitar e consultar uma corrida", async function () {
-	const inputSignup: any = {
-		name: "John Doe",
-		email: `john.doe${Math.random()}@gmail.com`,
-		cpf: "95818705552",
-		isPassenger: true
-	}
-	const accountService = new AccountService();
-	const outputSignup = await accountService.signup(inputSignup);
-	const inputRequestRide = {
-		passengerId: outputSignup.accountId,
-		from: {
-			lat: -27.584905257808835,
-			long: -48.545022195325124
-		},
-		to: {
-			lat: -27.496887588317275,
-			long: -48.522234807851476
-		}
-	}
-	const rideService = new RideService();
-	const outputRequestRide = await rideService.requestRide(inputRequestRide);
-	const outputGetRide = await rideService.getRide(outputRequestRide.rideId);
-	expect(outputGetRide.status).toBe("requested");
-	expect(outputGetRide.passenger_id).toBe(outputSignup.accountId);
-	expect(parseFloat(outputGetRide.from_lat)).toBe(inputRequestRide.from.lat);
-	expect(parseFloat(outputGetRide.from_long)).toBe(inputRequestRide.from.long);
-	expect(parseFloat(outputGetRide.to_lat)).toBe(inputRequestRide.to.lat);
-	expect(parseFloat(outputGetRide.to_long)).toBe(inputRequestRide.to.long);
-	expect(outputGetRide.date).toBeDefined();
+  jest.useFakeTimers({now: new Date('2023-09-15T15:20:00.000Z')});
+  const inputSignup: any = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "95818705552",
+    isPassenger: true,
+  };
+  const accountService = new AccountService();
+  const outputSignup = await accountService.signup(inputSignup);
+  const inputRequestRide = {
+    passengerId: outputSignup.accountId,
+    from: {
+      lat: -27.584905257808835,
+      long: -48.545022195325124,
+    },
+    to: {
+      lat: -27.496887588317275,
+      long: -48.522234807851476,
+    },
+  };
+  const rideService = new RideService();
+  const outputRequestRide = await rideService.requestRide(inputRequestRide);
+  const outputGetRide = await rideService.getRide(outputRequestRide.rideId);
+  expect(outputGetRide.status).toBe("requested");
+  expect(outputGetRide.passenger_id).toBe(outputSignup.accountId);
+  expect(parseFloat(outputGetRide.from_lat)).toBe(inputRequestRide.from.lat);
+  expect(parseFloat(outputGetRide.from_long)).toBe(inputRequestRide.from.long);
+  expect(parseFloat(outputGetRide.to_lat)).toBe(inputRequestRide.to.lat);
+  expect(parseFloat(outputGetRide.to_long)).toBe(inputRequestRide.to.long);
+  expect(outputGetRide.date.toString()).toBe(new Date('2023-09-15T15:20:00.000Z').toString());
+  jest.useRealTimers();
 });
 
 test("Deve solicitar uma corrida e aceitar uma corrida", async function () {
