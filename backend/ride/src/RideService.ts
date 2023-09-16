@@ -51,6 +51,14 @@ export default class RideService {
 		await this.rideDAO.update(ride);
 	}
 
+	async startRide (input: any) {
+		const ride = await this.getRide(input.rideId);
+		if (ride.status !== "accepted") throw new Error("The ride is not accepted");
+		ride.rideId = input.rideId;
+		ride.status = "in_progress";
+		await this.rideDAO.update(ride);
+	}
+
 	async getRide (rideId: string) {
 		const ride = await this.rideDAO.getById(rideId);
 		return ride;
