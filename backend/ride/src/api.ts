@@ -1,11 +1,11 @@
 // @ts-nocheck
-import express from "express";
 import AccountService from "./AccountService";
 import RideService from "./RideService";
+
+import express from "express";
+
 const app = express();
-
 app.use(express.json());
-
 const accountService = new AccountService();
 const rideService = new RideService();
 
@@ -47,8 +47,4 @@ app.get("/accounts/:accountId", async (req, res) => {
   res.json(output);
 });
 
-/* istanbul ignore next */
-if (process.env.NODE_ENV !== "test") {
-  app.listen(3000);
-}
 export default app;
