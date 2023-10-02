@@ -56,8 +56,8 @@ describe("API", () => {
     const responseGetRide = await request.get(`/rides/${responseRequestRide.body.rideId}`);
     expect(responseRequestRide.status).toEqual(200);
     expect(responseRequestRide.body.rideId).toBeDefined();
-    expect(responseGetRide.body.ride_id).toBe(responseRequestRide.body.rideId);
-    expect(responseGetRide.body.passenger_id).toBe(inputRequestRide.passengerId);
+    expect(responseGetRide.body.rideId).toBe(responseRequestRide.body.rideId);
+    expect(responseGetRide.body.passengerId).toBe(inputRequestRide.passengerId);
   });
 
 
@@ -122,9 +122,9 @@ describe("API", () => {
     const responseAcceptRide = await request.post("/accept-ride").send(inputAcceptRide);
     const responseGetRide = await request.get(`/rides/${responseRequestRide.body.rideId}`);
     expect(responseAcceptRide.status).toEqual(200);
-    expect(responseGetRide.body.ride_id).toBe(responseRequestRide.body.rideId);
-    expect(responseGetRide.body.passenger_id).toBe(inputRequestRide.passengerId);
-    expect(responseGetRide.body.driver_id).toBe(responseDriverSignup.body.accountId);
+    expect(responseGetRide.body.rideId).toBe(responseRequestRide.body.rideId);
+    expect(responseGetRide.body.passengerId).toBe(inputRequestRide.passengerId);
+    expect(responseGetRide.body.driverId).toBe(responseDriverSignup.body.accountId);
   });
 
   test("Não deve aceitar uma corrida de motorista inválido", async function () {
